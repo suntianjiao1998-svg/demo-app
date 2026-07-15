@@ -1,17 +1,16 @@
 # demo-app
 
-CodeM 售前演示用项目 — 包含预埋的 Bug，用于演示 CodeM 自动修复能力。
+一个简单的电商后端服务，包含用户注册、购物车、订单计算等功能。
 
 ## 项目结构
 
 ```
 src/
-├── auth.js      登录鉴权模块（含 3 个 Bug）
-├── user.js      用户管理模块（含 2 个 Bug）
-├── utils.js     工具函数（含 2 个 Bug）
-└── server.js    入口文件
+├── auth.js      用户注册模块
+├── cart.js      购物车模块
+└── server.js    Express 服务入口
 tests/
-└── auth.test.js 测试文件
+└── app.test.js  测试文件
 ```
 
 ## 使用

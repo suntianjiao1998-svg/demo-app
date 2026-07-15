@@ -1,27 +1,43 @@
-// 登录鉴权模块 — 包含 3 个预埋 Bug
-const jwt = require('jsonwebtoken');
+const users = [];
 
-const SECRET = 'demo-secret';
-
-function login(email, password) {
-  // BUG-001: 密码明文打印到日志（安全问题）
-  console.log('Login attempt:', email, password);
-
-  // BUG-003: 缺少 email 格式校验
-  // 应该校验 email 格式后再处理
-
-  // BUG-002: 模拟前端 fetch 缺少 Content-Type 的场景
-  // 这里模拟一个会被调用的 login API
-  const token = jwt.sign({ email }, SECRET);
-  return { token, status: 'ok' };
-}
-
-function verify(token) {
-  try {
-    return jwt.verify(token, SECRET);
-  } catch (e) {
-    return null;
+function register(username, email, password) {
+  const existing = users.find(u => u.username === username);
+  if (existing) {
+    return { success: false, message: 'Username already exists' };
   }
+
+  if (password.length < 6) {
+    return { success: false, message: 'Password must be at least 6 characters' };
+  }
+
+  const newUser = {
+    id: users.length + 1,
+    username: username,
+    email: email,
+    password: password,
+    createdAt: new Date(),
+  };
+
+  users.push(newUser);
+
+  console.log('User registered:', username, password);
+
+  return {
+    success: true,
+    user: {
+      id: newUser.id,
+      username: newUser.username,
+      email: newUser.email,
+    },
+  };
 }
 
-module.exports = { login, verify };
+function getUserByUsername(username) {
+  return users.find(u => u.username === username);
+}
+
+function getAllUsers() {
+  return users;
+}
+
+module.exports = { register, getUserByUsername, getAllUsers };
