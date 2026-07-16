@@ -82,12 +82,12 @@ assert(merged.quantity === 5, `quantity should be 5 after merge, got ${merged.qu
 const mergedTotal = getCartTotal();
 assert(mergedTotal === 12.5, `total should be 12.5 after merge, got ${mergedTotal}`);
 
-// 测试对象引用泄露（Bug 2：返回内部对象引用）
+// 验证对象引用泄露 Bug 存在：返回内部引用，外部修改会污染状态
 clearCart();
 const item1 = addToCart(1, 'Apple', 2.5, 3);
 item1.quantity = 100;
 const item2 = addToCart(1, 'Apple', 2.5, 2);
-assert(item2.quantity === 5, `after external mutation, re-add should get quantity 5, got ${item2.quantity} (reference leak bug)`);
+assert(item2.quantity === 102, `reference leak bug confirmed: got ${item2.quantity}, expected 102`);
 
 // 测试清空购物车
 clearCart();

@@ -200,6 +200,27 @@ body {
   color: #15803d;
 }
 
+/* ===== Topbar Notification ===== */
+.topbar-notification {
+  font-size: 20px;
+  cursor: pointer;
+  position: relative;
+  margin-left: 12px;
+}
+
+/* BUG-1: 通知红点永远显示，即使用户没有未读消息 */
+.notification-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 1.5px solid #fff;
+  display: block;
+}
+
 /* ===== Tab Content ===== */
 .tab-content {
   display: none;
@@ -250,6 +271,7 @@ body {
 .stat-icon.green { background: #dcfce7; }
 .stat-icon.orange { background: #fef3c7; }
 .stat-icon.purple { background: #ede9fe; }
+.stat-icon.red { background: #fee2e2; }
 
 .stat-value {
   font-size: 28px;
@@ -262,6 +284,20 @@ body {
   font-size: 13px;
   color: var(--text-secondary);
   margin-top: 2px;
+}
+
+/* BUG-2: 订单总额卡片背景和文字都是红色，金额数字看不见 */
+.stat-card-bug {
+  background: #ef4444;
+}
+.stat-card-bug .stat-value {
+  color: #ef4444;
+}
+.stat-card-bug .stat-label {
+  color: #fca5a5;
+}
+.stat-card-bug .stat-icon.red {
+  background: #fee2e2;
 }
 
 /* ===== Dashboard Dual Column ===== */
@@ -300,6 +336,18 @@ body {
   padding: 24px;
   display: flex;
   gap: 12px;
+}
+
+/* BUG-3: 添加客户按钮白底白字，文字看不见 */
+.btn-invisible {
+  background: #ffffff;
+  color: #ffffff;
+  border: none;
+}
+
+.btn-invisible:hover {
+  background: #f8fafc;
+  color: #f8fafc;
 }
 
 /* ===== Buttons ===== */
@@ -345,11 +393,8 @@ body {
   color: #fff;
 }
 
-/* BUG-004: 清空购物车按钮的 hover 颜色与背景色相同，看不到按钮 */
 .btn-danger:hover {
-  background: #ffffff;
-  border-color: var(--border-color);
-  color: var(--text-muted);
+  background: var(--danger-dark);
 }
 
 /* ===== Form ===== */
@@ -438,7 +483,8 @@ body {
   border-bottom: none;
 }
 
-/* BUG-003: 客户列表字体大小不一致，12px 太小 */
+/* BUG-1: 通知红点用 CSS 硬编码 display:block，即使用户没有未读消息也永远显示 */
+/* BUG-5: 客户列表字体大小不一致，12px 太小 */
 #customerTable td {
   font-size: 12px;
 }
@@ -516,6 +562,17 @@ body {
   text-align: center;
   color: var(--text-muted);
   padding: 32px 0;
+}
+
+/* BUG-4: 系统公告栏文字颜色与背景色相同，内容不可见 */
+.announcement-bug {
+  background: #f59e0b;
+  color: #f59e0b;
+  padding: 16px 24px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 
 /* ===== Responsive ===== */

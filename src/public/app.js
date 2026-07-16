@@ -67,8 +67,7 @@ async function deleteCustomer(id) {
       return;
     }
     log('客户已删除，ID：' + id, 'success');
-    // BUG-005: 删除客户后没有刷新列表，页面不会更新
-    // renderCustomers();
+    renderCustomers();
   } catch (err) {
     log('网络错误：' + err.message, 'error');
   }

@@ -20,8 +20,6 @@ function register(username, email, password) {
 
   users.push(newUser);
 
-  console.log('User registered:', username, password);
-
   return {
     success: true,
     user: {
