@@ -4,21 +4,16 @@ let logCount = 0;
 
 // ===== Tab 切换 =====
 function switchTab(tab) {
-  // 隐藏所有 tab
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  // 显示目标 tab
   const target = document.getElementById('tab-' + tab);
   if (target) target.classList.add('active');
-  // 更新导航高亮
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   const navItems = document.querySelectorAll('.nav-item');
   const tabMap = { dashboard: 0, customers: 1, orders: 2, logs: 3 };
   if (navItems[tabMap[tab]]) navItems[tabMap[tab]].classList.add('active');
-  // 更新标题
   const titles = { dashboard: '仪表盘', customers: '客户管理', orders: '订单管理', logs: '操作日志' };
   document.getElementById('pageTitle').textContent = titles[tab] || '';
   document.getElementById('breadcrumbCurrent').textContent = titles[tab] || '';
-  // 刷新数据
   if (tab === 'dashboard') renderDashboard();
   if (tab === 'customers') renderCustomers();
   if (tab === 'orders') renderCart();
@@ -195,20 +190,47 @@ async function renderCart() {
   }
 }
 
-// ===== 仪表盘统计 =====
+// ===== 仪表盘渲染 =====
 async function renderDashboard() {
   try {
-    const [custRes, cartRes] = await Promise.all([
-      fetch('/api/customers'),
-      fetch('/api/cart'),
-    ]);
-    const customers = await custRes.json();
-    const cart = await cartRes.json();
+    const res = await fetch('/api/dashboard');
+    const data = await res.json();
 
-    document.getElementById('statCustomers').textContent = customers.length;
-    document.getElementById('statCartItems').textContent = cart.items.length;
-    document.getElementById('statCartTotal').textContent = '$' + cart.total.toFixed(2);
+    // 统计卡片
+    document.getElementById('statCustomers').textContent = data.customerCount;
+    document.getElementById('statCartItems').textContent = data.cartItemCount;
+    document.getElementById('statCartTotal').textContent = '$' + data.cartTotal.toFixed(2);
     document.getElementById('statLogs').textContent = logCount;
+
+    // 最近客户表
+    const recentBody = document.getElementById('recentCustomerList');
+    if (data.recentCustomers.length === 0) {
+      recentBody.innerHTML = '<tr class="empty-row"><td colspan="4">暂无客户</td></tr>';
+    } else {
+      recentBody.innerHTML = data.recentCustomers.map(c => `
+        <tr>
+          <td>${c.id}</td>
+          <td>${c.username}</td>
+          <td>${c.email}</td>
+          <td>${c.createdAt ? new Date(c.createdAt).toLocaleString('zh-CN') : '-'}</td>
+        </tr>
+      `).join('');
+    }
+
+    // 订单概览表
+    const summaryBody = document.getElementById('cartSummaryList');
+    if (data.cartSummary.length === 0) {
+      summaryBody.innerHTML = '<tr class="empty-row"><td colspan="3">购物车为空</td></tr>';
+    } else {
+      summaryBody.innerHTML = data.cartSummary.map(item => `
+        <tr>
+          <td>${item.name}</td>
+          <td>${item.quantity}</td>
+          <td>$${item.subtotal.toFixed(2)}</td>
+        </tr>
+      `).join('');
+    }
+    document.getElementById('dashCartTotal').textContent = '$' + data.cartTotal.toFixed(2);
   } catch (err) {
     log('加载仪表盘失败：' + err.message, 'error');
   }

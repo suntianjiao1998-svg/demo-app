@@ -264,6 +264,14 @@ body {
   margin-top: 2px;
 }
 
+/* ===== Dashboard Dual Column ===== */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
 /* ===== Card ===== */
 .card {
   background: var(--bg-card);
@@ -515,6 +523,9 @@ body {
   .stat-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .dash-grid {
+    grid-template-columns: 1fr;
+  }
   .form-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -531,6 +542,9 @@ body {
     margin-left: 60px;
   }
   .stat-grid {
+    grid-template-columns: 1fr;
+  }
+  .dash-grid {
     grid-template-columns: 1fr;
   }
   .form-grid {

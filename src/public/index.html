@@ -56,8 +56,9 @@
         </div>
       </header>
 
-      <!-- 仪表盘页 -->
+      <!-- ===== 仪表盘页 ===== -->
       <section id="tab-dashboard" class="tab-content active">
+        <!-- 统计卡片 -->
         <div class="stat-grid">
           <div class="stat-card">
             <div class="stat-icon blue">👥</div>
@@ -70,7 +71,7 @@
             <div class="stat-icon green">📦</div>
             <div class="stat-body">
               <div class="stat-value" id="statCartItems">0</div>
-              <div class="stat-label">购物车商品</div>
+              <div class="stat-label">订单商品数</div>
             </div>
           </div>
           <div class="stat-card">
@@ -89,6 +90,55 @@
           </div>
         </div>
 
+        <!-- 双列：最近客户 + 订单概览 -->
+        <div class="dash-grid">
+          <!-- 最近注册客户 -->
+          <div class="card">
+            <div class="card-header">
+              <h2>最近注册客户</h2>
+              <button class="btn btn-default btn-sm" onclick="switchTab('customers')">查看全部</button>
+            </div>
+            <div class="table-wrapper">
+              <table class="data-table" id="recentCustomerTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>用户名</th>
+                    <th>邮箱</th>
+                    <th>注册时间</th>
+                  </tr>
+                </thead>
+                <tbody id="recentCustomerList"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 订单商品概览 -->
+          <div class="card">
+            <div class="card-header">
+              <h2>订单商品概览</h2>
+              <button class="btn btn-default btn-sm" onclick="switchTab('orders')">管理订单</button>
+            </div>
+            <div class="table-wrapper">
+              <table class="data-table" id="cartSummaryTable">
+                <thead>
+                  <tr>
+                    <th>商品名称</th>
+                    <th>数量</th>
+                    <th>小计</th>
+                  </tr>
+                </thead>
+                <tbody id="cartSummaryList"></tbody>
+              </table>
+            </div>
+            <div class="cart-total">
+              <span class="total-label">总计</span>
+              <span id="dashCartTotal" class="total-value">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 快捷操作 -->
         <div class="card">
           <div class="card-header">
             <h2>快捷操作</h2>
@@ -101,7 +151,7 @@
         </div>
       </section>
 
-      <!-- 客户管理页 -->
+      <!-- ===== 客户管理页 ===== -->
       <section id="tab-customers" class="tab-content">
         <div class="card">
           <div class="card-header">
@@ -145,7 +195,7 @@
         </div>
       </section>
 
-      <!-- 订单管理页 -->
+      <!-- ===== 订单管理页 ===== -->
       <section id="tab-orders" class="tab-content">
         <div class="card">
           <div class="card-header">
@@ -197,7 +247,7 @@
         </div>
       </section>
 
-      <!-- 操作日志页 -->
+      <!-- ===== 操作日志页 ===== -->
       <section id="tab-logs" class="tab-content">
         <div class="card">
           <div class="card-header">

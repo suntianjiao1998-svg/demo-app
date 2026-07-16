@@ -3,12 +3,10 @@
 const cart = [];
 
 function addToCart(productId, name, price, quantity) {
-  // 检查商品是否已在购物车中
   const existingItem = cart.find(item => item.productId === productId);
   if (existingItem) {
-    // 累加数量，基于购物车内的真实值而非外部可能持有的引用
-      existingItem.quantity += quantity;
-      return existingItem;
+    existingItem.quantity += quantity;
+    return existingItem;
   }
 
   const newItem = {
@@ -46,4 +44,8 @@ function clearCart() {
   cart.length = 0;
 }
 
-module.exports = { addToCart, removeFromCart, getCartTotal, getCart, clearCart };
+function seedCart(items) {
+  items.forEach(item => addToCart(item.productId, item.name, item.price, item.quantity));
+}
+
+module.exports = { addToCart, removeFromCart, getCartTotal, getCart, clearCart, seedCart };

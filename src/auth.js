@@ -40,4 +40,13 @@ function getAllUsers() {
   return users;
 }
 
-module.exports = { register, getUserByUsername, getAllUsers };
+function deleteCustomerById(id) {
+  const index = users.findIndex(u => u.id === id);
+  if (index === -1) {
+    return { success: false, message: 'Customer not found' };
+  }
+  users.splice(index, 1);
+  return { success: true, message: 'Customer deleted' };
+}
+
+module.exports = { register, getUserByUsername, getAllUsers, deleteCustomerById };

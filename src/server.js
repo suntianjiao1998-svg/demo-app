@@ -1,11 +1,39 @@
 const express = require('express');
 const path = require('path');
-const { register, getUserByUsername, getAllUsers } = require('./auth');
-const { addToCart, removeFromCart, getCartTotal, getCart, clearCart } = require('./cart');
+const { register, getUserByUsername, getAllUsers, deleteCustomerById } = require('./auth');
+const { addToCart, removeFromCart, getCartTotal, getCart, clearCart, seedCart } = require('./cart');
 
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// ===== 初始化种子数据 =====
+function seedData() {
+  // 注册初始客户
+  const seedCustomers = [
+    { username: '张伟', email: 'zhangwei@company.com', password: 'zhang123456' },
+    { username: '李娜', email: 'lina@company.com', password: 'lina123456' },
+    { username: '王强', email: 'wangqiang@company.com', password: 'wang123456' },
+    { username: '刘洋', email: 'liuyang@company.com', password: 'liu123456' },
+    { username: '陈静', email: 'chenjing@company.com', password: 'chen123456' },
+    { username: '赵磊', email: 'zhaolei@company.com', password: 'zhao123456' },
+    { username: '孙芳', email: 'sunfang@company.com', password: 'sun123456' },
+    { username: '周明', email: 'zhouming@company.com', password: 'zhou123456' },
+  ];
+  seedCustomers.forEach(c => register(c.username, c.email, c.password));
+
+  // 初始化购物车商品
+  const seedCartItems = [
+    { productId: 1001, name: '企业版授权 License', price: 2999.00, quantity: 2 },
+    { productId: 1002, name: '技术支持服务包', price: 599.00, quantity: 3 },
+    { productId: 1003, name: '数据存储扩容 1TB', price: 899.00, quantity: 1 },
+    { productId: 1004, name: 'API 调用包 (10万次)', price: 199.00, quantity: 5 },
+  ];
+  seedCartItems.forEach(item => addToCart(item.productId, item.name, item.price, item.quantity));
+}
+
+// 启动时填充种子数据
+seedData();
 
 // ===== 客户管理 API =====
 
@@ -36,13 +64,11 @@ app.post('/api/customers', (req, res) => {
 // 删除客户
 app.delete('/api/customers/:id', (req, res) => {
   const id = parseInt(req.params.id);
-  const users = getAllUsers();
-  const index = users.findIndex(u => u.id === id);
-  if (index === -1) {
-    return res.status(404).json({ error: 'Customer not found' });
+  const result = deleteCustomerById(id);
+  if (!result.success) {
+    return res.status(404).json({ error: result.message });
   }
-  users.splice(index, 1);
-  res.json({ success: true, message: 'Customer deleted' });
+  res.json(result);
 });
 
 // ===== 购物车/订单 API =====
@@ -78,6 +104,37 @@ app.delete('/api/cart/:productId', (req, res) => {
 app.delete('/api/cart', (req, res) => {
   clearCart();
   res.json({ success: true, message: 'Cart cleared' });
+});
+
+// ===== 仪表盘统计 API =====
+
+app.get('/api/dashboard', (req, res) => {
+  const customers = getAllUsers();
+  const cart = getCart();
+  const total = getCartTotal();
+
+  // 最近注册的客户（取后5个）
+  const recentCustomers = customers.slice(-5).reverse().map(u => ({
+    id: u.id,
+    username: u.username,
+    email: u.email,
+    createdAt: u.createdAt,
+  }));
+
+  // 购物车商品摘要
+  const cartSummary = cart.map(item => ({
+    name: item.name,
+    quantity: item.quantity,
+    subtotal: item.price * item.quantity,
+  }));
+
+  res.json({
+    customerCount: customers.length,
+    cartItemCount: cart.length,
+    cartTotal: total,
+    recentCustomers,
+    cartSummary,
+  });
 });
 
 // 启动服务

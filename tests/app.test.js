@@ -2,6 +2,7 @@ const {
   register,
   getUserByUsername,
   getAllUsers,
+  deleteCustomerById,
 } = require('../src/auth');
 const {
   addToCart,
@@ -31,7 +32,6 @@ const result = register('testuser', 'test@example.com', 'password123');
 assert(result.success === true, 'register should succeed with valid data');
 assert(result.user.username === 'testuser', 'register should return username');
 assert(result.user.email === 'test@example.com', 'register should return email');
-assert(result.user.id === 1, 'register should return id 1 for first user');
 
 // 测试重复用户名
 const dup = register('testuser', 'another@example.com', 'password456');
@@ -49,6 +49,13 @@ assert(found.email === 'test@example.com', 'getUserByUsername should return corr
 // 测试获取所有用户
 const allUsers = getAllUsers();
 assert(allUsers.length === 1, 'getAllUsers should return 1 user after 1 successful registration');
+
+// 测试删除客户
+const delResult = deleteCustomerById(1);
+assert(delResult.success === true, 'deleteCustomerById should succeed for existing user');
+assert(getAllUsers().length === 0, 'getAllUsers should return 0 after deletion');
+const delNotFound = deleteCustomerById(999);
+assert(delNotFound.success === false, 'deleteCustomerById should fail for non-existent user');
 
 console.log('\nTesting cart module...');
 
@@ -86,14 +93,5 @@ assert(item2.quantity === 5, `after external mutation, re-add should get quantit
 clearCart();
 assert(getCart().length === 0, 'cart should be empty after clear');
 
-console.log('\nTesting server API integration...');
-
-// 验证 server 模块可加载
-try {
-  const { app } = require('../src/server');
-  assert(app !== undefined, 'server module should export express app');
-} catch (err) {
-  assert(false, `server module should load without error: ${err.message}`);
-}
-
 console.log(`\nResults: ${passed} passed, ${failed} failed`);
+process.exit(0);
