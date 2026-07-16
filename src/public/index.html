@@ -7,84 +7,209 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>CRM 客户管理系统</h1>
-      <p class="subtitle">CodeM 售前演示用项目</p>
-    </header>
-
-    <!-- 客户管理区域 -->
-    <section class="card">
-      <h2>客户管理</h2>
-      
-      <!-- 添加客户表单 -->
-      <div class="form-row">
-        <input type="text" id="username" placeholder="用户名" />
-        <input type="email" id="email" placeholder="邮箱" />
-        <input type="password" id="password" placeholder="密码（至少6位）" />
-        <button id="addCustomerBtn" onclick="addCustomer()">添加客户</button>
+  <div class="layout">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-icon">◆</span>
+        <span class="logo-text">CRM System</span>
       </div>
-
-      <!-- 客户列表 -->
-      <table id="customerTable">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>用户名</th>
-            <th>邮箱</th>
-            <th>注册时间</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody id="customerList">
-        </tbody>
-      </table>
-    </section>
-
-    <!-- 订单/购物车区域 -->
-    <section class="card">
-      <h2>订单管理</h2>
-      
-      <!-- 添加商品表单 -->
-      <div class="form-row">
-        <input type="number" id="productId" placeholder="商品ID" />
-        <input type="text" id="productName" placeholder="商品名称" />
-        <input type="number" id="productPrice" placeholder="单价" step="0.01" />
-        <input type="number" id="productQty" placeholder="数量" value="1" />
-        <button onclick="addToCart()">加入购物车</button>
+      <nav class="sidebar-nav">
+        <a class="nav-item active" onclick="switchTab('dashboard')">
+          <span class="nav-icon">📊</span>
+          <span>仪表盘</span>
+        </a>
+        <a class="nav-item" onclick="switchTab('customers')">
+          <span class="nav-icon">👥</span>
+          <span>客户管理</span>
+        </a>
+        <a class="nav-item" onclick="switchTab('orders')">
+          <span class="nav-icon">📦</span>
+          <span>订单管理</span>
+        </a>
+        <a class="nav-item" onclick="switchTab('logs')">
+          <span class="nav-icon">📋</span>
+          <span>操作日志</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="avatar">A</div>
+          <div class="user-detail">
+            <div class="user-name">Admin</div>
+            <div class="user-role">管理员</div>
+          </div>
+        </div>
       </div>
+    </aside>
 
-      <!-- 购物车列表 -->
-      <table id="cartTable">
-        <thead>
-          <tr>
-            <th>商品ID</th>
-            <th>名称</th>
-            <th>单价</th>
-            <th>数量</th>
-            <th>小计</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody id="cartList">
-        </tbody>
-      </table>
+    <!-- 主内容区 -->
+    <div class="main-content">
+      <!-- 顶栏 -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 id="pageTitle">仪表盘</h1>
+          <span class="breadcrumb">首页 / <span id="breadcrumbCurrent">仪表盘</span></span>
+        </div>
+        <div class="topbar-right">
+          <span class="status-badge online">● 服务运行中</span>
+        </div>
+      </header>
 
-      <!-- 购物车总价 -->
-      <div class="cart-total">
-        <span>总计：</span>
-        <span id="cartTotal">$0.00</span>
-        <button id="clearCartBtn" onclick="clearCart()">清空购物车</button>
-      </div>
-    </section>
+      <!-- 仪表盘页 -->
+      <section id="tab-dashboard" class="tab-content active">
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">👥</div>
+            <div class="stat-body">
+              <div class="stat-value" id="statCustomers">0</div>
+              <div class="stat-label">客户总数</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">📦</div>
+            <div class="stat-body">
+              <div class="stat-value" id="statCartItems">0</div>
+              <div class="stat-label">购物车商品</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">💰</div>
+            <div class="stat-body">
+              <div class="stat-value" id="statCartTotal">$0.00</div>
+              <div class="stat-label">订单总额</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">📝</div>
+            <div class="stat-body">
+              <div class="stat-value" id="statLogs">0</div>
+              <div class="stat-label">操作记录</div>
+            </div>
+          </div>
+        </div>
 
-    <!-- 操作日志区域 -->
-    <section class="card">
-      <h2>操作日志</h2>
-      <div id="logArea" class="log-area">
-        <p class="log-entry">系统启动，等待操作...</p>
-      </div>
-    </section>
+        <div class="card">
+          <div class="card-header">
+            <h2>快捷操作</h2>
+          </div>
+          <div class="quick-actions">
+            <button class="btn btn-primary" onclick="switchTab('customers')">添加客户</button>
+            <button class="btn btn-default" onclick="switchTab('orders')">新建订单</button>
+            <button class="btn btn-default" onclick="switchTab('logs')">查看日志</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 客户管理页 -->
+      <section id="tab-customers" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <h2>客户列表</h2>
+            <button class="btn btn-primary btn-sm" id="addCustomerBtn" onclick="toggleAddForm()">+ 添加客户</button>
+          </div>
+          <div id="addForm" class="add-form" style="display:none;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="username" placeholder="请输入用户名" />
+              </div>
+              <div class="form-group">
+                <label>邮箱</label>
+                <input type="email" id="email" placeholder="请输入邮箱" />
+              </div>
+              <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="password" placeholder="至少6位" />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" onclick="addCustomer()">确认添加</button>
+              <button class="btn btn-default" onclick="toggleAddForm()">取消</button>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table id="customerTable" class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>用户名</th>
+                  <th>邮箱</th>
+                  <th>注册时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="customerList"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 订单管理页 -->
+      <section id="tab-orders" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <h2>购物车 / 订单</h2>
+          </div>
+          <div class="add-form" style="display:block;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>商品 ID</label>
+                <input type="number" id="productId" placeholder="商品编号" />
+              </div>
+              <div class="form-group">
+                <label>商品名称</label>
+                <input type="text" id="productName" placeholder="商品名称" />
+              </div>
+              <div class="form-group">
+                <label>单价</label>
+                <input type="number" id="productPrice" placeholder="0.00" step="0.01" />
+              </div>
+              <div class="form-group">
+                <label>数量</label>
+                <input type="number" id="productQty" value="1" min="1" />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" onclick="addToCart()">加入购物车</button>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table id="cartTable" class="data-table">
+              <thead>
+                <tr>
+                  <th>商品ID</th>
+                  <th>名称</th>
+                  <th>单价</th>
+                  <th>数量</th>
+                  <th>小计</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="cartList"></tbody>
+            </table>
+          </div>
+          <div class="cart-total">
+            <span class="total-label">总计</span>
+            <span id="cartTotal" class="total-value">$0.00</span>
+            <button id="clearCartBtn" class="btn btn-danger btn-sm" onclick="clearCart()">清空购物车</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 操作日志页 -->
+      <section id="tab-logs" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <h2>操作日志</h2>
+            <button class="btn btn-default btn-sm" onclick="clearLogs()">清空日志</button>
+          </div>
+          <div id="logArea" class="log-area">
+            <p class="log-entry">[系统] CRM 系统已启动，等待操作...</p>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
 
   <script src="/app.js"></script>

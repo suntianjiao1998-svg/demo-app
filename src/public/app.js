@@ -1,6 +1,36 @@
 // ===== CRM 前端交互逻辑 =====
 
-// 添加客户
+let logCount = 0;
+
+// ===== Tab 切换 =====
+function switchTab(tab) {
+  // 隐藏所有 tab
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  // 显示目标 tab
+  const target = document.getElementById('tab-' + tab);
+  if (target) target.classList.add('active');
+  // 更新导航高亮
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const navItems = document.querySelectorAll('.nav-item');
+  const tabMap = { dashboard: 0, customers: 1, orders: 2, logs: 3 };
+  if (navItems[tabMap[tab]]) navItems[tabMap[tab]].classList.add('active');
+  // 更新标题
+  const titles = { dashboard: '仪表盘', customers: '客户管理', orders: '订单管理', logs: '操作日志' };
+  document.getElementById('pageTitle').textContent = titles[tab] || '';
+  document.getElementById('breadcrumbCurrent').textContent = titles[tab] || '';
+  // 刷新数据
+  if (tab === 'dashboard') renderDashboard();
+  if (tab === 'customers') renderCustomers();
+  if (tab === 'orders') renderCart();
+}
+
+// ===== 添加客户表单切换 =====
+function toggleAddForm() {
+  const form = document.getElementById('addForm');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+// ===== 添加客户 =====
 async function addCustomer() {
   const username = document.getElementById('username').value.trim();
   const email = document.getElementById('email').value.trim();
@@ -32,7 +62,7 @@ async function addCustomer() {
   }
 }
 
-// 删除客户
+// ===== 删除客户 =====
 async function deleteCustomer(id) {
   try {
     const res = await fetch('/api/customers/' + id, { method: 'DELETE' });
@@ -49,14 +79,14 @@ async function deleteCustomer(id) {
   }
 }
 
-// 渲染客户列表
+// ===== 渲染客户列表 =====
 async function renderCustomers() {
   try {
     const res = await fetch('/api/customers');
     const customers = await res.json();
     const tbody = document.getElementById('customerList');
     if (customers.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999">暂无客户</td></tr>';
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">暂无客户数据</td></tr>';
       return;
     }
     tbody.innerHTML = customers.map(c => `
@@ -73,7 +103,7 @@ async function renderCustomers() {
   }
 }
 
-// 添加商品到购物车
+// ===== 添加商品到购物车 =====
 async function addToCart() {
   const productId = parseInt(document.getElementById('productId').value);
   const name = document.getElementById('productName').value.trim();
@@ -96,7 +126,7 @@ async function addToCart() {
       log('添加失败：' + data.error, 'error');
       return;
     }
-    log(`商品已添加：${name} x${quantity}，当前总价：$${data.total.toFixed(2)}`, 'success');
+    log(`商品已添加：${name} ×${quantity}，当前总价：$${data.total.toFixed(2)}`, 'success');
     document.getElementById('productId').value = '';
     document.getElementById('productName').value = '';
     document.getElementById('productPrice').value = '';
@@ -107,7 +137,7 @@ async function addToCart() {
   }
 }
 
-// 从购物车移除商品
+// ===== 从购物车移除商品 =====
 async function removeFromCart(productId) {
   try {
     const res = await fetch('/api/cart/' + productId, { method: 'DELETE' });
@@ -123,7 +153,7 @@ async function removeFromCart(productId) {
   }
 }
 
-// 清空购物车
+// ===== 清空购物车 =====
 async function clearCart() {
   try {
     const res = await fetch('/api/cart', { method: 'DELETE' });
@@ -139,14 +169,14 @@ async function clearCart() {
   }
 }
 
-// 渲染购物车
+// ===== 渲染购物车 =====
 async function renderCart() {
   try {
     const res = await fetch('/api/cart');
     const data = await res.json();
     const tbody = document.getElementById('cartList');
     if (data.items.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">购物车为空</td></tr>';
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">购物车为空</td></tr>';
     } else {
       tbody.innerHTML = data.items.map(item => `
         <tr>
@@ -165,7 +195,26 @@ async function renderCart() {
   }
 }
 
-// 日志输出
+// ===== 仪表盘统计 =====
+async function renderDashboard() {
+  try {
+    const [custRes, cartRes] = await Promise.all([
+      fetch('/api/customers'),
+      fetch('/api/cart'),
+    ]);
+    const customers = await custRes.json();
+    const cart = await cartRes.json();
+
+    document.getElementById('statCustomers').textContent = customers.length;
+    document.getElementById('statCartItems').textContent = cart.items.length;
+    document.getElementById('statCartTotal').textContent = '$' + cart.total.toFixed(2);
+    document.getElementById('statLogs').textContent = logCount;
+  } catch (err) {
+    log('加载仪表盘失败：' + err.message, 'error');
+  }
+}
+
+// ===== 日志输出 =====
 function log(message, type) {
   const logArea = document.getElementById('logArea');
   const entry = document.createElement('p');
@@ -174,8 +223,15 @@ function log(message, type) {
   entry.textContent = `[${time}] ${message}`;
   logArea.appendChild(entry);
   logArea.scrollTop = logArea.scrollHeight;
+  logCount++;
 }
 
-// 页面加载时初始化
-renderCustomers();
-renderCart();
+// ===== 清空日志 =====
+function clearLogs() {
+  const logArea = document.getElementById('logArea');
+  logArea.innerHTML = '<p class="log-entry">[系统] 日志已清空</p>';
+  logCount = 0;
+}
+
+// ===== 页面初始化 =====
+renderDashboard();
