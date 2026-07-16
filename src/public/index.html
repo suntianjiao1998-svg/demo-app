@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM 客户管理系统</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>CRM 客户管理系统</h1>
+      <p class="subtitle">CodeM 售前演示用项目</p>
+    </header>
+
+    <!-- 客户管理区域 -->
+    <section class="card">
+      <h2>客户管理</h2>
+      
+      <!-- 添加客户表单 -->
+      <div class="form-row">
+        <input type="text" id="username" placeholder="用户名" />
+        <input type="email" id="email" placeholder="邮箱" />
+        <input type="password" id="password" placeholder="密码（至少6位）" />
+        <button id="addCustomerBtn" onclick="addCustomer()">添加客户</button>
+      </div>
+
+      <!-- 客户列表 -->
+      <table id="customerTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>用户名</th>
+            <th>邮箱</th>
+            <th>注册时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="customerList">
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 订单/购物车区域 -->
+    <section class="card">
+      <h2>订单管理</h2>
+      
+      <!-- 添加商品表单 -->
+      <div class="form-row">
+        <input type="number" id="productId" placeholder="商品ID" />
+        <input type="text" id="productName" placeholder="商品名称" />
+        <input type="number" id="productPrice" placeholder="单价" step="0.01" />
+        <input type="number" id="productQty" placeholder="数量" value="1" />
+        <button onclick="addToCart()">加入购物车</button>
+      </div>
+
+      <!-- 购物车列表 -->
+      <table id="cartTable">
+        <thead>
+          <tr>
+            <th>商品ID</th>
+            <th>名称</th>
+            <th>单价</th>
+            <th>数量</th>
+            <th>小计</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="cartList">
+        </tbody>
+      </table>
+
+      <!-- 购物车总价 -->
+      <div class="cart-total">
+        <span>总计：</span>
+        <span id="cartTotal">$0.00</span>
+        <button id="clearCartBtn" onclick="clearCart()">清空购物车</button>
+      </div>
+    </section>
+
+    <!-- 操作日志区域 -->
+    <section class="card">
+      <h2>操作日志</h2>
+      <div id="logArea" class="log-area">
+        <p class="log-entry">系统启动，等待操作...</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

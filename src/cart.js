@@ -6,8 +6,9 @@ function addToCart(productId, name, price, quantity) {
   // 检查商品是否已在购物车中
   const existingItem = cart.find(item => item.productId === productId);
   if (existingItem) {
-    existingItem.quantity += quantity;
-    return existingItem;
+    // 累加数量，基于购物车内的真实值而非外部可能持有的引用
+      existingItem.quantity += quantity;
+      return existingItem;
   }
 
   const newItem = {
